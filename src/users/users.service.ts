@@ -1,24 +1,23 @@
 import { Injectable } from '@nestjs/common';
-
+import { Knex } from 'knex';
+import { InjectConnection } from 'nest-knexjs';
 // This should be a real class/interface representing a user entity
 export type User = any;
 
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-  ];
+  
+  constructor(@InjectConnection() private readonly knex: Knex) {}
 
   async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+    return this.knex.select('*').from('member')
+    .where({ id: username })
+    .leftJoin('roles', 'member.role_index', 'roles.index')
+    .limit(1);
   }
+
+  async findAll(){
+    return this.knex.table('member');
+  }
+
 }
