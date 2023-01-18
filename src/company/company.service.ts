@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { InjectKnex, KnexPagination } from '@mithleshjs/knex-nest';
+import { Role } from 'src/auth/role.enum';
 
 @Injectable()
 export class CompanyService {
@@ -20,24 +21,33 @@ export class CompanyService {
     }
 
     async getMemberInsertCompanyList(roleName : string, companyIndex : number){
-        let result = {}
 
         switch(roleName){
-            case 'ADMIN':
-                result = await this.knex.select('*')
+            case Role.Admin:
+                return await this.knex.select('*')
                 .from('company')
                 .where({
                     index : companyIndex
                 })
-                break
-            case 'SUPERADMIN':
-                result = await this.knex.select('*')
+                
+            case Role.SuperAdmin:
+                return await this.knex.select('*')
                 .from('company')
-                break    
-        }
+                   
+        } 
 
-        return result;
+    }
 
+
+    async getCompanyPersonList(memberIndex : number, coIndex : number){
+
+        return await this.knex('member').select(['index', 'id', 'name'])
+        .where({
+            co_index : coIndex
+        })
+        .whereNot({
+            index : memberIndex
+        })
     }
 
 

@@ -10,9 +10,9 @@ export class MqttService implements OnModuleInit {
   constructor(@InjectKnex() private readonly knex: Knex){}
 
   onModuleInit() {
-    const host = 'localhost'
-    const port = '1883'
-    const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
+    const host = process.env.MQTT_URL
+    const port = process.env.MQTT_PORT
+    const clientId =  process.env.MQTT_CLIENTID;
 
     const connectUrl = `mqtt://${host}:${port}`;
 
@@ -21,14 +21,14 @@ export class MqttService implements OnModuleInit {
       clientId,
       clean: true,
       connectTimeout: 4000,
-      username: 'mqttuser',
-      password: 'pttok',
+      username: process.env.MQTT_USER,
+      password: process.env.MQTT_PASSWORD,
       reconnectPeriod: 1000,
     });
 
     
     this.mqttClient.on("connect", function () {
-      console.log("Connected to CloudMQTT");
+      console.log("Connected to LocalMQTT");
     });
     this.mqttClient.subscribe('#', (err) =>{
         if(err){

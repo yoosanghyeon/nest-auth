@@ -18,7 +18,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "start:local": "cross-env NODE_ENV=local nest start --watch",
+    "start:devops": "cross-env NODE_ENV=dev nest start --watch"
   },
   "dependencies": {
     "@mithleshjs/knex-nest": "^2.2.0",
@@ -34,6 +36,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "knex": "^2.3.0",
+    "knex-on-duplicate-update": "^2.3.0",
     "light-date": "^1.2.0",
     "mqtt": "^4.3.7",
     "mysql2": "^2.3.3",
@@ -58,6 +61,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

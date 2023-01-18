@@ -36,6 +36,7 @@ export class AuthService {
 
 
     return {
+      memberIndex : payload.member_index,
       userName : payload.username,
       userId : payload.userId,
       roleName : payload.role_name,

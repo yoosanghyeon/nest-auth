@@ -46,4 +46,17 @@ export class CompanyController {
         return await this.companyService.getMemberInsertCompanyList(user.role_name, user.co_index);
     }
 
+    
+    @ApiOperation({ summary: '회사 초대 사람 목록 API', description: '초대할 사람 목록' })
+    @ApiBearerAuth('defaultBearerAuth')
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
+    @Roles(Role.SuperAdmin, Role.Admin, Role.User)
+    @Get("personlist")
+    async getCompanyPersonList(@Request() req){
+        const user = req.user;
+        return await this.companyService.getCompanyPersonList(user.memberIndex, user.co_index);
+    }
+
+
 }

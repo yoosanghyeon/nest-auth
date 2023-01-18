@@ -19,30 +19,22 @@ import { diskStorage } from 'multer';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { validate } from './util/env.validation';
 import { MqttModule } from './mqtt/mqtt.module';
+import { ChattingController } from './chatting/chatting.controller';
+import { ChattingService } from './chatting/chatting.service';
+import { GpsController } from './gps/gps.controller';
+import { GpsService } from './gps/gps.service';
 
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'MY_MQTT_SERVICE',  //* MY_MQTT_SERVICE : 의존성 이름
-        transport: Transport.MQTT,
-        options: {
-          host: 'localhost',
-          port: 1883,
-          clientId : 'api_server01',
-          username : 'mqttuser',
-          password : 'pttok'
-        }
-      }
-    ]),
+    
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot : "/uploads"
     }),
-    // ConfigService 를 inject 하기 위해
+    // 파일 업로드
     MulterModule.registerAsync({
         imports: [ConfigModule],
         useFactory: async (config: ConfigService) => ({
@@ -58,8 +50,15 @@ import { MqttModule } from './mqtt/mqtt.module';
         }),
         inject: [ConfigService],
     }),
-
-    ConfigModule.forRoot(), KnexModule.registerAsync({
+    // 환경 변수
+    ConfigModule.forRoot(
+      {
+        isGlobal: true, // 전체적으로 사용하기 위해
+        envFilePath: `.${process.env.NODE_ENV}.env`,
+        validate
+      }
+    ),
+    KnexModule.registerAsync({
     useFactory: () => ({
       config: {
         client: 'mysql2',
@@ -74,7 +73,7 @@ import { MqttModule } from './mqtt/mqtt.module';
     }),
   }),
   AuthModule, UsersModule, MqttModule],
-  controllers: [AppController, DpartmentController, CompanyController, RoleController, FileController],
-  providers: [AppService, DpartmentService, CompanyService, RoleService, FileService],
+  controllers: [AppController, DpartmentController, CompanyController, RoleController, FileController, ChattingController, GpsController],
+  providers: [AppService, DpartmentService, CompanyService, RoleService, FileService, ChattingService, GpsService],
 })
 export class AppModule {}
